@@ -2,12 +2,15 @@ package com.zahran.Task.Tracker.App.services.impl;
 
 import java.time.Instant;
 
+import org.springframework.stereotype.Service;
+
 import com.zahran.Task.Tracker.App.domain.CreateTaskRequest;
 import com.zahran.Task.Tracker.App.domain.Entities.Task;
 import com.zahran.Task.Tracker.App.domain.Entities.TaskStatus;
 import com.zahran.Task.Tracker.App.repositories.TaskRepository;
 import com.zahran.Task.Tracker.App.services.TaskService;
 
+@Service 
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
 
