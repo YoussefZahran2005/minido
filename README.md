@@ -9,7 +9,7 @@ Minido
 ![Status](https://img.shields.io/badge/status-completed-4c9f70?style=flat-square)
  
 </div>
----
+
  
 ## About
  
