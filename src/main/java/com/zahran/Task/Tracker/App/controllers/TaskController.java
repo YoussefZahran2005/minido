@@ -1,15 +1,24 @@
 package com.zahran.Task.Tracker.App.controllers;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zahran.Task.Tracker.App.domain.CreateTaskRequest;
+import com.zahran.Task.Tracker.App.domain.UpdateTaskRequest;
 import com.zahran.Task.Tracker.App.domain.DTOs.CreateTaskRequestDto;
 import com.zahran.Task.Tracker.App.domain.DTOs.TaskDto;
+import com.zahran.Task.Tracker.App.domain.DTOs.UpdateTaskRequestDto;
 import com.zahran.Task.Tracker.App.domain.Entities.Task;
 import com.zahran.Task.Tracker.App.mappers.TaskMapper;
 import com.zahran.Task.Tracker.App.services.TaskService;
@@ -28,14 +37,39 @@ public class TaskController {
         this.taskMapper = taskMapper;
     }
 
-    @PostMapping 
+    @PostMapping
     public ResponseEntity<TaskDto> createTask(
-       @Valid @RequestBody  CreateTaskRequestDto createTaskRequestDto
-    ) {
+            @Valid @RequestBody CreateTaskRequestDto createTaskRequestDto) {
         CreateTaskRequest createTaskRequest = taskMapper.fromDto(createTaskRequestDto);
-        Task task = taskService.createTask(createTaskRequest); 
+        Task task = taskService.createTask(createTaskRequest);
         TaskDto taskDto = taskMapper.toDto(task);
 
         return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
     }
+
+    @GetMapping
+    public ResponseEntity<List<TaskDto>> listTasks() {
+        List<Task> taskList = taskService.listTasks();
+        List<TaskDto> dtoTaskList = taskList.stream().map(taskMapper::toDto).toList();
+
+        return new ResponseEntity<>(dtoTaskList, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "{taskId}")
+    public ResponseEntity<TaskDto> updateTask(
+            @PathVariable UUID taskId,
+            @Valid @RequestBody UpdateTaskRequestDto updateTaskRequestDto) {
+        UpdateTaskRequest updateTaskRequest = taskMapper.fromDto(updateTaskRequestDto);
+        Task task = taskService.updateTask(taskId, updateTaskRequest);
+        TaskDto taskDto = taskMapper.toDto(task);
+
+        return ResponseEntity.ok(taskDto);
+    }
+
+    @DeleteMapping(path = "/{taskId}")
+    public ResponseEntity<Void> deleteTask(@PathVariable UUID taskId) {
+        taskService.deleteTask(taskId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }
